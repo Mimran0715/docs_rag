@@ -1,3 +1,3 @@
 # docs_rag
 
-advanced rag project 
+advanced rag project made for observability
