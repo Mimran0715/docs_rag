@@ -26,5 +26,5 @@ def get_vector_store(model: str, chunked_documents: List[Document], persist_dire
         print("No existing vector store found...generating")
         return generate_embeddings(model, chunked_documents, persist_directory=persist_directory)
 
-def query(q:str, vector_store: Chroma) -> List[Document]:
-    return vector_store.similarity_search(q)
+def query(q:str, vector_store: Chroma, k:int = 4) -> List[Document]:
+    return vector_store.similarity_search(q, k=k)

@@ -1,0 +1,119 @@
+Q: What is Prometheus?
+A: Prometheus is an open-source systems monitoring and alerting toolkit that collects and stores metrics as time series data, with each data point recorded alongside a timestamp and optional key-value label pairs.
+KEYWORDS: monitoring, alerting, toolkit, time series, open-source
+
+Q: When was Prometheus created and by whom?
+A: Prometheus was originally built at SoundCloud, first released around 2012, and later became an independent open-source project.
+KEYWORDS: SoundCloud, history, origin, 2012
+
+Q: What foundation hosts the Prometheus project?
+A: Prometheus joined the Cloud Native Computing Foundation (CNCF) in 2016 as the second hosted project, after Kubernetes.
+KEYWORDS: CNCF, Cloud Native Computing Foundation, Kubernetes, governance
+
+Q: What language are most Prometheus components written in?
+A: Most Prometheus components are written in Go, which makes them easy to build and deploy as static binaries.
+KEYWORDS: Go, language, static binaries
+
+Q: What is the main way Prometheus collects metrics?
+A: Prometheus collects metrics primarily by scraping HTTP endpoints exposed by monitored targets at regular intervals.
+KEYWORDS: scraping, HTTP endpoint, targets, pull model
+
+Q: What is a Pushgateway used for?
+A: The Pushgateway allows short-lived or batch jobs that cannot be scraped directly to push their metrics so Prometheus can still collect them.
+KEYWORDS: pushgateway, short-lived jobs, batch jobs
+
+Q: What tool is commonly used to visualize Prometheus data?
+A: Grafana is commonly used to visualize metrics collected and stored by Prometheus, though other API consumers can also be used.
+KEYWORDS: Grafana, visualization, dashboards
+
+Q: What query language does Prometheus use?
+A: Prometheus uses PromQL, its own flexible query language, to select and aggregate time series data.
+KEYWORDS: PromQL, query language, querying
+
+Q: What is a Prometheus exporter?
+A: An exporter is a tool that exposes metrics from a host or service in a format Prometheus can scrape, often used for systems that don't natively expose Prometheus-style metrics.
+KEYWORDS: exporter, host metrics, instrumentation
+
+Q: What format is used to configure Prometheus?
+A: Prometheus is configured using a YAML file, commonly named prometheus.yml, which defines settings like scrape intervals and scrape targets.
+KEYWORDS: YAML, prometheus.yml, configuration file
+
+Q: What are the two main interval settings in the global configuration block?
+A: The global configuration block typically sets a scrape_interval (how often targets are scraped) and an evaluation_interval (how often rules are evaluated).
+KEYWORDS: scrape_interval, evaluation_interval, global config
+
+Q: Where can you interactively query and view Prometheus metrics in a browser?
+A: Prometheus provides an expression browser, available at the /graph endpoint on the Prometheus server, where you can enter a PromQL expression and view results as a table or a graph.
+KEYWORDS: expression browser, /graph, PromQL, table, graph
+
+Q: Does Prometheus rely on distributed storage?
+A: No — Prometheus stores all scraped samples locally and does not depend on distributed storage; individual server nodes are autonomous.
+KEYWORDS: local storage, distributed storage, autonomous, no external dependency
+
+Q: What does Prometheus's data model consist of?
+A: Prometheus uses a multi-dimensional data model, where each time series is identified by a metric name along with a set of key-value label pairs.
+KEYWORDS: data model, multi-dimensional, metric name, labels
+
+Q: What scale of time series can a single Prometheus instance handle?
+A: A single Prometheus instance can reliably handle tens of millions of active time series.
+KEYWORDS: scale, active series, tens of millions
+
+Q: How can you run Prometheus with high availability?
+A: You can run identical Prometheus servers in parallel on two or more separate machines to achieve basic high availability.
+KEYWORDS: high availability, redundancy, identical servers
+
+Q: What is Alertmanager responsible for?
+A: Alertmanager handles alerts sent by client applications such as the Prometheus server, managing deduplication, grouping, and routing them to the correct notification channels.
+KEYWORDS: Alertmanager, alerts, deduplication, grouping, routing
+
+Q: What does the Prometheus server do with rules over stored data?
+A: Prometheus runs rules over locally stored data to either record new aggregated time series or generate alerts based on defined conditions.
+KEYWORDS: rules, recording rules, alerting rules, aggregation
+
+Q: What is service discovery used for in Prometheus?
+A: Service discovery allows Prometheus to automatically find and monitor targets in dynamic environments, integrating with most major tools and cloud platforms.
+KEYWORDS: service discovery, dynamic targets, cloud integration
+
+Q: What binary do you run to start a Prometheus server?
+A: You run the single compiled binary called prometheus (or prometheus.exe on Windows) to start the Prometheus server.
+KEYWORDS: prometheus binary, starting the server, single binary
+
+Q: How do you see available command-line options for the Prometheus binary?
+A: You can pass the --help flag to the prometheus binary to see all available command-line options.
+KEYWORDS: --help, command-line flags, options
+
+Q: What is a job in a Prometheus scrape configuration?
+A: A job in a scrape configuration groups together targets that serve the same purpose, defined under scrape_configs with a job_name and its associated targets.
+KEYWORDS: job_name, scrape_configs, targets, grouping
+
+Q: What kinds of data is Prometheus best suited for recording?
+A: Prometheus works well for recording purely numeric time series data, fitting both machine-centric monitoring and highly dynamic, service-oriented architectures.
+KEYWORDS: numeric data, time series, machine-centric, service-oriented
+
+Q: Are all Prometheus ecosystem components required to use Prometheus?
+A: No — the Prometheus ecosystem consists of multiple components, many of which (such as client libraries and the Pushgateway) are optional depending on your use case.
+KEYWORDS: optional components, ecosystem, client libraries
+
+Q: What versioning approach do mature Prometheus repositories follow?
+A: Repositories in the Prometheus GitHub organization that have reached version 1.0.0 broadly follow semantic versioning, where breaking changes are indicated by increments of the major version.
+KEYWORDS: semantic versioning, breaking changes, major version
+
+Q: What is the relationship between Prometheus and Kubernetes?
+A: Prometheus is the monitoring system directly supported by Kubernetes and is considered the de facto standard for monitoring within the cloud native ecosystem.
+KEYWORDS: Kubernetes, cloud native, de facto standard
+
+Q: What can client libraries be used for in the Prometheus ecosystem?
+A: Client libraries are used to instrument application code directly, allowing applications to expose their own custom metrics for Prometheus to scrape.
+KEYWORDS: client libraries, instrumentation, custom metrics
+
+Q: What does a target expose for Prometheus to scrape it?
+A: A target exposes a metrics HTTP endpoint that the Prometheus server periodically scrapes to collect its current metric values.
+KEYWORDS: metrics endpoint, HTTP, target, scraping
+
+Q: What happens after Prometheus scrapes and stores samples?
+A: After storing scraped samples locally, Prometheus can run rules against that data to generate new derived time series or fire alerts when conditions are met.
+KEYWORDS: post-scrape processing, derived series, alert firing
+
+Q: Is Prometheus a good fit for monitoring highly dynamic environments?
+A: Yes — Prometheus's dimensional data model and service discovery integrations make it well suited to monitoring highly dynamic, service-oriented deployments in addition to traditional machine-centric monitoring.
+KEYWORDS: dynamic environments, service-oriented, dimensional model
