@@ -1,0 +1,11 @@
+langchain
+langchain-chroma
+langchain-classic
+langchain-community
+langchain-core
+langchain-ollama
+langchain-text-splitters
+neo4j
+neo4j-graphrag
+python-dotenv
+rank-bm25
