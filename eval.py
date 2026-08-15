@@ -53,6 +53,37 @@ def check_retrival_hits(results: List[Document], keywords: List[str], threshold:
     hits = sum(1 for kw in keywords if kw.lower() in combined_text)
     return (hits / len(keywords)) >= threshold
 
+def eval_hits(retrieval_fn, label:str = "Retrieval", ):
+    qa_pairs = parse_qa_text()
+
+    hits = []
+    misses = [] # tracking losses
+    for qa in qa_pairs:
+        #results = embeddings.query(q=qa["question"], vector_store=vector_store)
+        results = retrieval_fn(qa["question"])
+        #print(f"Retrieved {len(results)} chunks")
+
+        hit = check_retrival_hits(results, qa["keywords"])
+        hits.append(hit)
+        if not hit: 
+            misses.append({"question": qa["question"], "answer": qa["answer"], "keywords": qa["keywords"], "retrieved": [r.page_content[:150] for r in results]})
+       
+    hit_metric = sum(hits) / len(hits)
+
+    print(f"\n{label} hit rate: {hit_metric:.2%}")
+    print(f"{label} misses ({len(misses)}):")
+    for m in misses:
+        print(f"\nQ: {m['question']}")
+        print(f"Expected keywords: {m['keywords']}")
+        print(f"Top retrieved chunk: {m['retrieved'][0]}")
+
+    return hits, misses
+
+def test_similarity_scores(vector_store: Chroma) -> None:
+    results_with_scores = vector_store.similarity_search_with_score("What tool is commonly used to visualize Prometheus data?", k=15)
+    for doc, score in results_with_scores:
+        print(f"{score:.4f} | {doc.page_content[:100]}")
+
 def main():
     persist_directory = "./chroma_langchain_db"
     embedding_model = 'nomic-embed-text'
@@ -62,32 +93,20 @@ def main():
     print("Eval: Chunking docs...")
     chunked_docs = document_loader.chunk_docs(docs)
     vector_store = embeddings.get_vector_store(model=embedding_model, chunked_documents=chunked_docs, persist_directory=persist_directory)
+    dense_retriever = vector_store.as_retriever(search_kwargs={"k": 4})
 
-    qa_pairs = parse_qa_text()
+    dense_fn = lambda q: embeddings.query(q=q, vector_store=vector_store)
+    eval_hits(dense_fn, label="Dense (Ollama + Chroma)")
 
-    hits = []
-    misses = [] # tracking losses
-    for qa in qa_pairs:
-        results = embeddings.query(q=qa["question"], vector_store=vector_store)
-        print(f"Retrieved {len(results)} chunks")
+    bm25_retriever = embeddings.build_bm25(chunked_docs)
+    bm25_fn = lambda q: embeddings.query_bm25(q, bm25_retriever)
+    eval_hits(bm25_fn, label="BM25")
 
-        hit = check_retrival_hits(results, qa["keywords"])
-        hits.append(hit)
-        if not hit: 
-            misses.append({"question": qa["question"], "answer": qa["answer"], "keywords": qa["keywords"], "retrieved": [r.page_content[:150] for r in results]})
-       
-    hit_metric = sum(hits) / len(hits)
-    print(f"Retrieval hit rate: {hit_metric:.2%}")
-
-    print(f"\nMisses ({len(misses)}):")
-    for m in misses:
-        print(f"\nQ: {m['question']}")
-        print(f"Expected keywords: {m['keywords']}")
-        print(f"Top retrieved chunk: {m['retrieved'][0]}")
-
-    results_with_scores = vector_store.similarity_search_with_score("What tool is commonly used to visualize Prometheus data?", k=15)
-    for doc, score in results_with_scores:
-        print(f"{score:.4f} | {doc.page_content[:100]}")
+    weights = [0.3, 0.7]
+    print(f"Weights: Dense {weights[0]} | Sparse (BM25) {weights[1]}")
+    hybrid_retriever = embeddings.build_ensemble(retrievers=[dense_retriever, bm25_retriever], weights=weights)
+    hybrid_fn = lambda q: hybrid_retriever.invoke(q)
+    eval_hits(hybrid_fn, label="Hybrid (Dense + BM25)")
 
 if __name__ == "__main__":
     main()
